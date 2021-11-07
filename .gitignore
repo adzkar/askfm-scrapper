@@ -2,4 +2,5 @@
 .idea/
 project/
 __pycache__/
-
+logs.txt
+.DS_Store
