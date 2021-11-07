@@ -45,8 +45,8 @@ def retrieve(askfm_nick, dl_img, to_csv, to_json):
     # Append base Askfm profile link to pending list to be scraped first
     _pending_list.append(ask_url + '/' + askfm_nick)
 
-    # scraping bêdzie trwa³ tak d³ugo, jak istnieje chocia¿ 1 link w liœcie "_pending_list".
-    # len = 0 oznacza, ¿e nie ma wiêcej linków
+    # scraping bï¿½dzie trwaï¿½ tak dï¿½ugo, jak istnieje chociaï¿½ 1 link w liï¿½cie "_pending_list".
+    # len = 0 oznacza, ï¿½e nie ma wiï¿½cej linkï¿½w
 
 
 
@@ -89,14 +89,12 @@ def retrieve(askfm_nick, dl_img, to_csv, to_json):
                 _question.append(question_obj)
 
                 logger.info(f'Adding question #{_n}.')
-
                 # If given question had image, we access it and download it
-                if question_obj.image:
+                if question_obj.image and dl_img:
                     save_one_image(askfm_nick, question_obj)
 
                 _n += 1
-
-            # Remove already scraped profile from pedning list
+            # Remove already scraped profile from pending list
             _pending_list.remove(link)
             print(f'{link} removed from temp...')
             logger.info(f'{link} removed from temp.')
@@ -123,7 +121,8 @@ def perform_file_operations(askfm_nick, dl_img, to_csv, to_json):
             save_to_csv(askfm_nick)
         if to_json:
             save_to_json(askfm_nick)
-
+        if dl_img:
+            save_images(askfm_nick)
 
 def save_to_json(askfm_nick):
     logger.info('Running "save_to_json" function.')
@@ -142,6 +141,7 @@ def save_to_json(askfm_nick):
             'time': each.date,
             'link': each.link,
             'img': f"{askfm_nick}-{each.link.split('/')[-1]}.{each.image_extension}" if each.image else None,
+            'img_url': each.image_link if each.image else '',
             'asker_url': each.asker
             }
 
@@ -149,7 +149,6 @@ def save_to_json(askfm_nick):
 
             # if each.image:
             #     save_images(each.image_link, each.image_extension, each.link)
-
         json.dump(_list, file, indent=4, ensure_ascii=True)
         print(f'Saved to JSON: {file_name}')
 
